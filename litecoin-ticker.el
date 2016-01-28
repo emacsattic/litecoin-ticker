@@ -20,9 +20,12 @@
 
 (defvar litecoin-ticker-url "https://btc-e.com/api/2/ltc_usd/ticker")
 
-(defvar litecoin-ticker-mode-line " $0.00")
+(defvar litecoin-ticker-mode-line nil)
 
 (defvar litecoin-ticker-timer nil)
+
+(defvar litecoin-price-more-than 4
+  "litecoin price larger than this, show mode line")
 
 (defun litecoin-ticker-poll-info ()
   (let (json info price)
@@ -32,8 +35,10 @@
       (setq json (buffer-substring-no-properties (point) (point-max))))
     (setq info (car (json-read-from-string json)))
     (setq price (assoc-default 'buy info))
-    (setq litecoin-ticker-mode-line
-          (format " $%s" price))))
+    (if (>= price litecoin-price-more-than)
+	(setq litecoin-ticker-mode-line (format " $%s" price))
+      (setq litecoin-ticker-mode-line nil))
+    price))
 
 (define-minor-mode litecoin-ticker-mode
   "Minor mode to display the last litecoin price"
@@ -46,3 +51,4 @@
     (cancel-timer litecoin-ticker-timer)
     (setq litecoin-ticker-timer nil)))
 
+(provide 'litecoin-ticker)
