@@ -18,7 +18,7 @@
 
 ;;; Code:
 
-(defcustom btcbox-url "https://www.btcbox.co.jp/api/v1/ticker/")
+(defvar btcbox-url "https://www.btcbox.co.jp/api/v1/ticker/")
 
 (defvar btcbox-ticker-mode-line " ¥0.00")
 
@@ -26,7 +26,7 @@
 
 (defun btcbox-ticker-poll-info ()
   (let (json info sell-price buy-price)
-    (with-current-buffer (url-retrieve-synchronously btcbox-url)
+    (with-current-buffer (url-retrieve-synchronously btcbox-url t)
       (goto-char (point-min))
       (re-search-forward "gzip" nil 'move)
       (setq json (buffer-substring-no-properties (point) (point-max))))
