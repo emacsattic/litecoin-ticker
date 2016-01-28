@@ -1,4 +1,4 @@
-;;; litecoin-ticker --- show litecoin price
+;;; litecoin-ticker.el --- show litecoin price
 
 ;; Copyright (C) 2016  Zhe Lei.
 
@@ -55,3 +55,4 @@ if nil, show current price")
     (setq litecoin-ticker-timer nil)))
 
 (provide 'litecoin-ticker)
+;;; litecoin-ticker.el ends here
