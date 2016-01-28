@@ -18,6 +18,8 @@
 
 ;;; Code:
 
+(require 'json)
+
 (defvar litecoin-ticker-url "https://btc-e.com/api/2/ltc_usd/ticker")
 
 (defvar litecoin-ticker-mode-line nil)
