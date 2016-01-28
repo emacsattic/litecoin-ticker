@@ -24,7 +24,6 @@
 
 (defvar btcbox-ticker-timer nil)
 
-
 (defun btcbox-ticker-poll-info ()
   (let (json info sell-price buy-price)
     (with-current-buffer (url-retrieve-synchronously btcbox-url)
@@ -32,12 +31,11 @@
       (re-search-forward "gzip" nil 'move)
       (setq json (buffer-substring-no-properties (point) (point-max))))
     (setq info (json-read-from-string json))
+    (setq sell-price (assoc-default 'sell info))
+    (setq buy-price (assoc-default 'buy info))
     (setq btcbox-ticker-mode-line
-	  (format " [Sell:¥%s Buy:%s]"
-		  (assoc-default 'buy info)
-		  (assoc-default 'sell info)))
-    (list (assoc-default 'buy info) (assoc-default 'sell info))))
-
+	  (format " [Sell:¥%s Buy:%s]" sell-price buy-price))
+    (list sell-price buy-price)))
 
 (define-minor-mode btcbox-ticker-mode
   "Minor mode to display the last btcbox price"
