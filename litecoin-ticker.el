@@ -25,7 +25,8 @@
 (defvar litecoin-ticker-timer nil)
 
 (defvar litecoin-price-more-than 4
-  "litecoin price larger than this, show mode line")
+  "litecoin price larger than this, show mode line
+if nil, show current price")
 
 (defun litecoin-ticker-poll-info ()
   (let (json info price)
@@ -35,9 +36,11 @@
       (setq json (buffer-substring-no-properties (point) (point-max))))
     (setq info (car (json-read-from-string json)))
     (setq price (assoc-default 'buy info))
-    (if (>= price litecoin-price-more-than)
-	(setq litecoin-ticker-mode-line (format " $%s" price))
-      (setq litecoin-ticker-mode-line nil))
+    (if litecoin-price-more-than
+	(if (>= price litecoin-price-more-than)
+	    (setq litecoin-ticker-mode-line (format " $%s" price))
+	  (setq litecoin-ticker-mode-line nil))
+      (setq litecoin-ticker-mode-line (format " $%s" price)))
     price))
 
 (define-minor-mode litecoin-ticker-mode
