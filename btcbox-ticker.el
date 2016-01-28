@@ -34,7 +34,7 @@
     (setq sell-price (assoc-default 'sell info))
     (setq buy-price (assoc-default 'buy info))
     (setq btcbox-ticker-mode-line
-	  (format " [Sell:¥%s Buy:%s]" sell-price buy-price))
+          (format " [Sell:¥%s Buy:%s]" sell-price buy-price))
     (list sell-price buy-price)))
 
 (define-minor-mode btcbox-ticker-mode
