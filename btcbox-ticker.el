@@ -20,7 +20,7 @@
 
 (defvar btcbox-url "https://www.btcbox.co.jp/api/v1/ticker/")
 
-(defvar btcbox-ticker-mode-line " ¥0.00")
+(defvar btcbox-ticker-mode-line nil)
 
 (defvar btcbox-ticker-timer nil)
 
@@ -47,4 +47,6 @@
 	    (run-at-time "0 sec" 10 #'btcbox-ticker-poll-info))
     (cancel-timer btcbox-ticker-timer)
     (setq btcbox-ticker-timer nil)))
+
+(provide 'btcbox-ticker)
 
