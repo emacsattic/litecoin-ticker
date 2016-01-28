@@ -45,6 +45,7 @@ if nil, show current price")
       (setq litecoin-ticker-mode-line (format " $%s" price)))
     price))
 
+;;;###autoload
 (define-minor-mode litecoin-ticker-mode
   "Minor mode to display the last litecoin price"
   :init-value nil
