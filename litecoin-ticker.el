@@ -1,4 +1,4 @@
-;;; litecoin-ticker --- show litecoin price
+;;; litecoin-ticker.el --- show litecoin price
 
 ;; Copyright (C) 2016  Zhe Lei.
 
@@ -17,6 +17,8 @@
 
 
 ;;; Code:
+
+(require 'json)
 
 (defvar litecoin-ticker-url "https://btc-e.com/api/2/ltc_usd/ticker")
 
@@ -43,6 +45,7 @@ if nil, show current price")
       (setq litecoin-ticker-mode-line (format " $%s" price)))
     price))
 
+;;;###autoload
 (define-minor-mode litecoin-ticker-mode
   "Minor mode to display the last litecoin price"
   :init-value nil
@@ -55,3 +58,4 @@ if nil, show current price")
     (setq litecoin-ticker-timer nil)))
 
 (provide 'litecoin-ticker)
+;;; litecoin-ticker.el ends here
