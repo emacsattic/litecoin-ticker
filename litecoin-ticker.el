@@ -37,7 +37,7 @@
 
 (defvar litecoin-ticker-timer nil)
 
-(defcustom litecoin-price-higher-than 4
+(defcustom litecoin-price-higher-than nil
   "litecoin price higher than the many price, displayed on mode-line
 if nil, always displayed"
   :type 'number
