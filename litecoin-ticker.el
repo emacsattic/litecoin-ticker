@@ -1,7 +1,14 @@
 ;;; litecoin-ticker.el --- show litecoin price
 
-;; Copyright (C) 2016  Zhe Lei.
-
+;; Copyright (C) 2016 by Zhe Lei.
+;;
+;; Author: Zhe Lei
+;; Version: 0.1
+;; Package-Version: 20160129
+;; Package-Requires: (json "1.2")
+;;
+;; This file is not part of GNU emacs.
+;;
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or
@@ -20,26 +27,31 @@
 
 (require 'json)
 
-(defvar litecoin-ticker-url "https://btc-e.com/api/2/ltc_usd/ticker")
+(defgroup litecoin-ticker nil
+  "litecoin-ticker"
+  :group 'comms)
+
+(defconst litecoin-ticker-url "https://btc-e.com/api/2/ltc_usd/ticker")
 
 (defvar litecoin-ticker-mode-line nil)
 
 (defvar litecoin-ticker-timer nil)
 
-(defvar litecoin-price-more-than 4
-  "litecoin price larger than this, show mode line
-if nil, show current price")
+(defcustom litecoin-price-higher-than 4
+  "litecoin price higher than the many price, displayed on mode-line
+if nil, always displayed"
+  :type 'number
+  :group 'litecoin-ticker)
 
-(defun litecoin-ticker-poll-info ()
-  (let (json info price)
-    (with-current-buffer (url-retrieve-synchronously litecoin-ticker-url t)
-      (goto-char (point-min))
-      (re-search-forward "gzip" nil 'move)
-      (setq json (buffer-substring-no-properties (point) (point-max))))
-    (setq info (car (json-read-from-string json)))
-    (setq price (assoc-default 'buy info))
-    (if litecoin-price-more-than
-	(if (>= price litecoin-price-more-than)
+(defun litecoin-ticker-info ()
+  "Retrieve the average litecoin price from `litecoin-ticker-url'"
+  (let (info price)
+    (with-current-buffer
+	(url-retrieve-synchronously litecoin-ticker-url t)
+      (setq info (car (json-read))))
+    (setq price (assoc-default 'last info))
+    (if litecoin-price-higher-than
+	(if (>= price litecoin-price-higher-than)
 	    (setq litecoin-ticker-mode-line (format " $%s" price))
 	  (setq litecoin-ticker-mode-line nil))
       (setq litecoin-ticker-mode-line (format " $%s" price)))
@@ -53,7 +65,7 @@ if nil, show current price")
   :lighter litecoin-ticker-mode-line
   (if litecoin-ticker-mode
       (setq litecoin-ticker-timer
-	    (run-at-time "0 sec" 10 #'litecoin-ticker-poll-info))
+	    (run-at-time "0 sec" 10 #'litecoin-ticker-info))
     (cancel-timer litecoin-ticker-timer)
     (setq litecoin-ticker-timer nil)))
 
