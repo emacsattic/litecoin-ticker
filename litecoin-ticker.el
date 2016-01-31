@@ -44,7 +44,7 @@ if nil, always displayed"
   :group 'litecoin-ticker)
 
 (defun litecoin-ticker-info ()
-  "Retrieve the average litecoin price from `litecoin-ticker-url'"
+  "Retrieve the lastest litecoin price from `litecoin-ticker-url'"
   (let (info price)
     (with-current-buffer
 	(url-retrieve-synchronously litecoin-ticker-url t)
@@ -59,7 +59,7 @@ if nil, always displayed"
 
 ;;;###autoload
 (define-minor-mode litecoin-ticker-mode
-  "Minor mode to display the last litecoin price"
+  "Minor mode to display the lastest litecoin price"
   :init-value nil
   :global t
   :lighter litecoin-ticker-mode-line
