@@ -1,4 +1,4 @@
-;;; litecoin-ticker.el --- show litecoin price
+;;; litecoin-ticker.el --- litecoin price in modeline
 
 ;; Copyright (C) 2016 by Zhe Lei.
 ;;
@@ -31,11 +31,23 @@
   "litecoin-ticker"
   :group 'comms)
 
-(defconst litecoin-ticker-url "https://btc-e.com/api/2/ltc_usd/ticker")
+(defconst litecoin-ticker-url
+  "https://btc-e.com/api/2/ltc_usd/ticker")
 
 (defvar litecoin-ticker-mode-line nil)
 
-(defvar litecoin-ticker-timer nil)
+(defvar litecoin-ticker-timer nil
+  "litecoin ticker timer to update the price")
+
+(defcustom litecoin-ticker-timer-interval 20
+  "Timer interval to update the price"
+  :type 'number
+  :group 'litecoin-ticker)
+
+(defcustom litecoin-ticker-symbol "$"
+  "Price symbol to show in modeline, default $"
+  :type 'string
+  :group 'litecoin-ticker)
 
 (defcustom litecoin-price-higher-than nil
   "litecoin price higher than the many price, displayed on mode-line
@@ -52,9 +64,11 @@ if nil, always displayed"
     (setq price (assoc-default 'last info))
     (if litecoin-price-higher-than
 	(if (>= price litecoin-price-higher-than)
-	    (setq litecoin-ticker-mode-line (format " $%s" price))
+	    (setq litecoin-ticker-mode-line
+		  (format " %s%s" litecoin-ticker-symbol price))
 	  (setq litecoin-ticker-mode-line nil))
-      (setq litecoin-ticker-mode-line (format " $%s" price)))
+      (setq litecoin-ticker-mode-line
+	    (format " %s%s" litecoin-ticker-symbol price)))
     price))
 
 ;;;###autoload
@@ -65,7 +79,7 @@ if nil, always displayed"
   :lighter litecoin-ticker-mode-line
   (if litecoin-ticker-mode
       (setq litecoin-ticker-timer
-	    (run-at-time "0 sec" 10 #'litecoin-ticker-info))
+	    (run-at-time "0 sec" litecoin-ticker-timer-interval #'litecoin-ticker-info))
     (cancel-timer litecoin-ticker-timer)
     (setq litecoin-ticker-timer nil)))
 
