@@ -17,36 +17,48 @@
 
 
 ;;; Code:
+(require 'json)
+(require 'url)
 
-(defvar btcbox-url "https://www.btcbox.co.jp/api/v1/ticker/")
+;; --- variable definition -----
 
-(defvar btcbox-ticker-mode-line nil)
+(defvar btcbox-url "https://www.btcbox.co.jp/api/v1/ticker/"
+  "Btcbox api url")
 
-(defvar btcbox-ticker-timer nil)
+(defvar btcbox-ticker-mode-line nil
+  "Btcbox ticker modeline")
 
-(defun btcbox-ticker-poll-info ()
-  (let (json info sell-price buy-price)
+(defvar btcbox-ticker-timer nil
+  "Stores the timer to display bitcoin ticker")
+
+(defcustom btcbox-ticker-timer-interval 10
+  "Stores the timer interval"
+  :type 'integer)
+
+;; --- Fucntion definition -----
+
+(defun btcbox-ticker-api-data ()
+  "Retrieve the api data from `btcbox-url', and convert it to json data."
+  (let (info sell-price buy-price)
     (with-current-buffer (url-retrieve-synchronously btcbox-url t)
-      (goto-char (point-min))
-      (re-search-forward "gzip" nil 'move)
-      (setq json (buffer-substring-no-properties (point) (point-max))))
-    (setq info (json-read-from-string json))
-    (setq sell-price (assoc-default 'sell info))
-    (setq buy-price (assoc-default 'buy info))
-    (setq btcbox-ticker-mode-line
-          (format " [Sell:¥%s Buy:%s]" sell-price buy-price))
-    (list sell-price buy-price)))
+      (setq json (json-read-from-string url-http-end-of-headers (point-max))) 
+      (setq sell-price (assoc-default 'sell info))
+      (setq buy-price (assoc-default 'buy info))
+      (setq btcbox-ticker-mode-line
+	    (format " [Sell:¥%s Buy:¥%s]" sell-price buy-price))
+      (list sell-price buy-price))))
 
 (define-minor-mode btcbox-ticker-mode
-  "Minor mode to display the last btcbox price"
+  "Minor mode to display btcbox ticker"
   :init-value nil
-  :global t
+  :global nil
   :lighter btcbox-ticker-mode-line
   (if btcbox-ticker-mode
       (setq btcbox-ticker-timer
-	    (run-at-time "0 sec" 10 #'btcbox-ticker-poll-info))
+	    (run-at-time "0 sec"
+			 btcbox-ticker-timer-interval #'btcbox-ticker-api-data))
     (cancel-timer btcbox-ticker-timer)
     (setq btcbox-ticker-timer nil)))
 
 (provide 'btcbox-ticker)
-
+;;; btcbox-ticker.el ends here
