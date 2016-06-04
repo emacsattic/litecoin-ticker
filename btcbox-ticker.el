@@ -40,14 +40,16 @@
 (defun btcbox-ticker-api-data ()
   "Retrieve the api data from `btcbox-url', and convert it to json data."
   (let (info sell-price buy-price)
-    (with-current-buffer (url-retrieve-synchronously btcbox-url t)
-      (setq json (json-read-from-string url-http-end-of-headers (point-max))) 
-      (setq sell-price (assoc-default 'sell info))
-      (setq buy-price (assoc-default 'buy info))
-      (setq btcbox-ticker-mode-line
-	    (format " [Sell:¥%s Buy:¥%s]" sell-price buy-price))
-      (list sell-price buy-price))))
+    (with-current-buffer (url-retrieve-synchronously btcbox-url)
+      (setq info (json-read-from-string
+		  (buffer-substring url-http-end-of-headers (point-max)))))
+    (setq sell-price (cdr (assoc 'sell info)))
+    (setq buy-price (cdr (assoc 'buy info)))
+    (setq btcbox-ticker-mode-line
+	  (format " [Sell:¥%s Buy:¥%s]" sell-price buy-price))
+    (list sell-price buy-price))) 
 
+;;;###autoload
 (define-minor-mode btcbox-ticker-mode
   "Minor mode to display btcbox ticker"
   :init-value nil
@@ -55,8 +57,8 @@
   :lighter btcbox-ticker-mode-line
   (if btcbox-ticker-mode
       (setq btcbox-ticker-timer
-	    (run-at-time "0 sec"
-			 btcbox-ticker-timer-interval #'btcbox-ticker-api-data))
+	    (run-at-time 0
+			 btcbox-ticker-timer-interval 'btcbox-ticker-api-data))
     (cancel-timer btcbox-ticker-timer)
     (setq btcbox-ticker-timer nil)))
 
