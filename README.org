@@ -1,0 +1,9 @@
+
+* Get bitcoin price from Japan trade website =BtcBox=
+
+btcbox-ticker is an emacs package that offers the feature to display bitcoin price in the modeline. 
+The package retrieves prices every 10 seconds. You can customize the interval to adjust by:
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq btcbox-ticker-timer-interval 20)
+#+END_SRC
