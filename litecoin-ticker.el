@@ -5,7 +5,7 @@
 ;; Author: Zhe Lei
 ;; Version: 0.2
 ;; Package-Version: 20160513
-;; Package-Requires: (json "1.2")
+;; Package-Requires: ((json "1.2"))
 ;;
 ;; This file is not part of GNU emacs.
 ;;
